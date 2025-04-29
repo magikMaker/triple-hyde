@@ -7,7 +7,7 @@
     {{ $paginator := .Paginate (where .Site.RegularPages "Type" "in" site.Params.mainSections) }}
     {{ range $paginator.Pages }}
       {{ if .Draft }}
-        {{ .Scratch.Set "draftPage" true }}
+        {{ .Scratch.Set "draftPage" true }} 
       {{ else }}
         {{ .Scratch.Set "draftPage" false }}
       {{ end }}
