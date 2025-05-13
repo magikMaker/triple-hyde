@@ -1,13 +1,87 @@
 {{ $include_toc := .Params.include_toc}}
+<!-- AddToAny script loaded at the top to ensure it's available -->
+<script defer src="https://static.addtoany.com/menu/page.js"></script>
 <article>
   <header>
-    <h1>{{ .Title }}</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <h1 style="margin: 0;">{{ .Title }}</h1>
+    </div>
     {{ with .Params.subtitle }}
     <span class="post__subtitle">
       {{.}}
     </span>
     {{ end }}
     {{ partial "page-single/post-meta.html" . }}
+    <!-- Share icon to be moved inside post__meta div via JavaScript -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Create the share icon element
+        var shareIcon = document.createElement('a');
+        shareIcon.href = '#';
+        shareIcon.className = 'a2a_dd';
+        shareIcon.title = 'Share this post';
+        shareIcon.style.marginLeft = '10px';
+        shareIcon.style.display = 'inline-block';
+        shareIcon.style.verticalAlign = 'middle';
+
+        // Create the SVG element
+        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '16');
+        svg.setAttribute('height', '16');
+        svg.setAttribute('viewBox', '0 0 24 24');
+        svg.setAttribute('fill', 'none');
+        svg.setAttribute('stroke', 'currentColor');
+        svg.setAttribute('stroke-width', '2');
+        svg.setAttribute('stroke-linecap', 'round');
+        svg.setAttribute('stroke-linejoin', 'round');
+
+        // Create the SVG elements
+        var circle1 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle1.setAttribute('cx', '18');
+        circle1.setAttribute('cy', '5');
+        circle1.setAttribute('r', '3');
+
+        var circle2 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle2.setAttribute('cx', '6');
+        circle2.setAttribute('cy', '12');
+        circle2.setAttribute('r', '3');
+
+        var circle3 = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle3.setAttribute('cx', '18');
+        circle3.setAttribute('cy', '19');
+        circle3.setAttribute('r', '3');
+
+        var line1 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line1.setAttribute('x1', '8.59');
+        line1.setAttribute('y1', '13.51');
+        line1.setAttribute('x2', '15.42');
+        line1.setAttribute('y2', '17.49');
+
+        var line2 = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line2.setAttribute('x1', '15.41');
+        line2.setAttribute('y1', '6.51');
+        line2.setAttribute('x2', '8.59');
+        line2.setAttribute('y2', '10.49');
+
+        // Append the SVG elements to the SVG
+        svg.appendChild(circle1);
+        svg.appendChild(circle2);
+        svg.appendChild(circle3);
+        svg.appendChild(line1);
+        svg.appendChild(line2);
+
+        // Append the SVG to the share icon
+        shareIcon.appendChild(svg);
+
+        // Find the post__meta div
+        var postMeta = document.querySelector('.post__meta');
+
+        // Insert the share icon after the "min read" text
+        if (postMeta) {
+          postMeta.appendChild(shareIcon);
+        }
+      });
+    </script>
   </header>
   {{ $tableOfContents := .TableOfContents }}
   {{ with .Site.Params.toc }}
@@ -26,6 +100,18 @@
   <div class="post">
     {{ .Content }}
   </div>
+
+  <!-- AddToAny Share Buttons -->
+  <h3 style="margin-top: 2em; margin-bottom: 0.5em;">Share this post</h3>
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style" style="margin: 1em 0;">
+    <a class="a2a_dd" href="https://www.addtoany.com/share"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_x"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <!-- End AddToAny Share Buttons -->
+
   {{ partial "page-single/post-navigation.html" . }}
   {{ partial "page-single/post-related.html" . }}
   {{ partial "page-single/post-comment.html" . }}

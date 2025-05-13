@@ -1,1 +1,164 @@
 
+
+<!-- Fix Font Awesome icons -->
+<style>
+  /* Ensure Font Awesome icons are visible */
+  .fas, .far, .fab, .fa {
+    display: inline-block !important;
+    font-style: normal !important;
+    font-variant: normal !important;
+    text-rendering: auto !important;
+    line-height: 1 !important;
+  }
+
+  /* Specific fix for clock icon */
+  .fa-clock, .fa-calendar-alt, .fa-tags {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    -webkit-font-smoothing: antialiased !important;
+  }
+</style>
+
+<!-- Add copy button to code blocks -->
+<style>
+  .code-block-container {
+    position: relative;
+  }
+
+  .copy-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    padding: 4px 8px;
+    background-color: #444;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s, position 0.2s, top 0.2s;
+    z-index: 100;
+  }
+
+  .copy-button.fixed {
+    position: fixed;
+  }
+
+  .copy-button:hover {
+    opacity: 1;
+  }
+
+  .copy-button.copied {
+    background-color: #4CAF50;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Find all code blocks
+    const codeBlocks = document.querySelectorAll('pre');
+
+    codeBlocks.forEach(function(codeBlock) {
+      // Skip if this code block already has a copy button (to avoid duplicates on page navigation)
+      if (codeBlock.parentNode.classList.contains('code-block-container')) {
+        return;
+      }
+
+      // Create container for positioning
+      const container = document.createElement('div');
+      container.className = 'code-block-container';
+
+      // Create copy button
+      const copyButton = document.createElement('button');
+      copyButton.className = 'copy-button';
+      copyButton.textContent = 'Copy';
+      copyButton.setAttribute('aria-label', 'Copy code to clipboard');
+
+      // Insert the container before the code block
+      codeBlock.parentNode.insertBefore(container, codeBlock);
+
+      // Move the code block into the container
+      container.appendChild(codeBlock);
+
+      // Add the copy button to the container
+      container.appendChild(copyButton);
+
+      // Function to update button position on scroll
+      function updateButtonPosition() {
+        const containerRect = container.getBoundingClientRect();
+        const buttonRect = copyButton.getBoundingClientRect();
+
+        // If the top of the container is not visible but the bottom is still in view
+        if (containerRect.top < 0 && containerRect.bottom > buttonRect.height + 10) {
+          copyButton.classList.add('fixed');
+          copyButton.style.top = '5px';
+          copyButton.style.right = (window.innerWidth - containerRect.right + 5) + 'px';
+        } else {
+          copyButton.classList.remove('fixed');
+          copyButton.style.top = '5px';
+          copyButton.style.right = '5px';
+        }
+      }
+
+      // Add scroll event listener
+      window.addEventListener('scroll', updateButtonPosition);
+      // Also update on resize
+      window.addEventListener('resize', updateButtonPosition);
+      // Initial position check
+      updateButtonPosition();
+
+      // Add click event to copy button
+      copyButton.addEventListener('click', function() {
+        // Get the code text
+        const code = codeBlock.querySelector('code')
+          ? codeBlock.querySelector('code').innerText
+          : codeBlock.innerText;
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(code).then(function() {
+          // Visual feedback
+          copyButton.textContent = 'Copied!';
+          copyButton.classList.add('copied');
+
+          // Reset after 2 seconds
+          setTimeout(function() {
+            copyButton.textContent = 'Copy';
+            copyButton.classList.remove('copied');
+          }, 2000);
+        }).catch(function(err) {
+          console.error('Could not copy text: ', err);
+
+          // Fallback for browsers that don't support clipboard API
+          const textarea = document.createElement('textarea');
+          textarea.value = code;
+          textarea.style.position = 'fixed';  // Prevent scrolling to bottom
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+
+          try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+              copyButton.textContent = 'Copied!';
+              copyButton.classList.add('copied');
+            } else {
+              copyButton.textContent = 'Error!';
+            }
+          } catch (err) {
+            console.error('Fallback: Could not copy text: ', err);
+            copyButton.textContent = 'Error!';
+          }
+
+          document.body.removeChild(textarea);
+
+          // Reset after 2 seconds
+          setTimeout(function() {
+            copyButton.textContent = 'Copy';
+            copyButton.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    });
+  });
+</script>
