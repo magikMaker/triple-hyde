@@ -1,6 +1,28 @@
 {{ $include_toc := .Params.include_toc}}
 <!-- AddToAny script loaded at the top to ensure it's available -->
 <script defer src="https://static.addtoany.com/menu/page.js"></script>
+<!-- AddToAny callback for Umami analytics -->
+<script>
+// A custom "onShare" handler for AddToAny to track events in Umami
+function trackShareWithUmami(data) {
+  // Check if Umami is available
+  if (typeof umami !== 'undefined') {
+    // Track the share event in Umami
+    umami.track('share', {
+      service: data.service,
+      title: data.title,
+      url: data.url
+    });
+  }
+}
+
+// Setup AddToAny "onShare" callback function
+var a2a_config = a2a_config || {};
+a2a_config.callbacks = a2a_config.callbacks || [];
+a2a_config.callbacks.push({
+  share: trackShareWithUmami
+});
+</script>
 <article>
   <header>
     <div style="display: flex; justify-content: space-between; align-items: center;">
